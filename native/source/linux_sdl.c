@@ -563,6 +563,23 @@ static void pumpInput(void) {
         snapshot.buttons &= ~(1u << 8);  // the keyboard's button is not also a game button
         unsigned width, height;
         screenSize(&width, &height);
+
+        // The inline Switch keyboard is a modal input surface.  swkbdInlineUpdate() above
+        // owns the physical controller while it is visible, so do not leak the same
+        // controller state into the game underneath it.  Previously an A/B/etc. press was
+        // delivered both to the keyboard and to PokeMMO, which could activate the login
+        // button or otherwise change the field behind the keyboard.  Keep the connection
+        // state and timestamp so the gamepad itself is not reported as disconnected; all
+        // buttons, axes, touch and virtual-cursor input are suppressed until the keyboard
+        // disappears.
+        if (linuxSdlInputKeyboardVisible()) {
+            LinuxInputSnapshot idle = {0};
+            idle.gamepad = snapshot.gamepad;
+            idle.timestamp_ns = snapshot.timestamp_ns;
+            linuxSdlEventsUpdate(&idle);
+            return;
+        }
+
         linuxSdlCursorUpdate(&snapshot, width, height);
         snapshot.x *= (float)width / 1280.0f;  // the touch screen reports positions of a 1280x720 screen, the mouse of the game lives in window pixels
         snapshot.y *= (float)height / 720.0f;
