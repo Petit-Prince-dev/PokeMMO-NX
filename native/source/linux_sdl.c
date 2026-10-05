@@ -699,13 +699,15 @@ static uint32_t sdlGamepadId(void *object) {
     (void)object;
     return LINUX_SDL_GAMEPAD_ID;
 }
+// Short on purpose: with a longer name the Android theme of the game loops its layout on the settings pages (lag, and a warning).
+#define GAMEPAD_NAME "Switch Controller"
 static const char *sdlGamepadName(void *object) {
     (void)object;
-    return "Nintendo Switch Controller";
+    return GAMEPAD_NAME;
 }
 static const char *sdlGamepadNameForId(uint32_t id) {
     (void)id;
-    return "Nintendo Switch Controller";
+    return GAMEPAD_NAME;
 }
 static int sdlGamepadType(void *object) {
     (void)object;
