@@ -533,13 +533,18 @@ static bool sdlGlExtensionSupported(const char *name) {
 // The console's controller and touch screen are sampled when the game pumps events (at most once per millisecond) and
 // turned into SDL events by linux_sdl_events.c: touch is a mouse, the controller is gamepad number 1.
 static atomic_ullong last_pump_ns;
+static bool padAtRest(const LinuxInputSnapshot *snapshot) {  // no button held, sticks and triggers near their rest position
+    for (unsigned i = 0; i < LINUX_SDL_GAMEPAD_AXES; ++i)
+        if (snapshot->axes[i] > 9000 || snapshot->axes[i] < -9000) return false;
+    return snapshot->buttons == 0;
+}
 static void pumpInput(void) {
     linuxSdlInputKeyboardPump();
     uint64_t now = armTicksToNs(armGetSystemTick());
     uint64_t before = atomic_load(&last_pump_ns);
     if (now - before < 1000000ull || !atomic_compare_exchange_strong(&last_pump_ns, &before, now)) return;
     LinuxInputSnapshot snapshot;
-    static bool keyboard_button_before;
+    static bool keyboard_button_before, keyboard_has_pad;
     if (linuxSdlInputSample(&snapshot)) {
         if (linuxFilePickerCapturesInput()) {
             // The file chooser owns the controller and the touch screen: the game sees them idle, so that nothing stays pressed behind it.
@@ -563,7 +568,16 @@ static void pumpInput(void) {
         snapshot.buttons &= ~(1u << 8);  // the keyboard's button is not also a game button
         unsigned width, height;
         screenSize(&width, &height);
-        linuxSdlCursorUpdate(&snapshot, width, height);
+        // The console's keyboard uses the controller while it is up: the game sees it at rest until the keyboard is gone and everything is released.
+        if (linuxSdlInputKeyboardVisible())
+            keyboard_has_pad = true;
+        else if (keyboard_has_pad && padAtRest(&snapshot))
+            keyboard_has_pad = false;
+        if (keyboard_has_pad) {
+            snapshot.buttons = 0;
+            memset(snapshot.axes, 0, sizeof(snapshot.axes));
+        } else
+            linuxSdlCursorUpdate(&snapshot, width, height);
         snapshot.x *= (float)width / 1280.0f;  // the touch screen reports positions of a 1280x720 screen, the mouse of the game lives in window pixels
         snapshot.y *= (float)height / 720.0f;
         linuxSdlEventsUpdate(&snapshot);
