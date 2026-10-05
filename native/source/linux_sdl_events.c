@@ -150,6 +150,23 @@ void linuxSdlEventsUpdate(const LinuxInputSnapshot *now) {
     // touch screen as a mouse (the first finger): a tap is a left click made when the finger lifts, a finger that stays where it landed is a
     // right click, a finger that moves drags with the left button held from where it landed
     releaseClick(time, false);
+    // the controller's cursor: it moves the mouse, and its two buttons are the mouse buttons
+    if (now->pointer && (!before.pointer || now->pointer_x != before.pointer_x || now->pointer_y != before.pointer_y)) {
+        float dx = before.pointer ? now->pointer_x - mouse_x : 0, dy = before.pointer ? now->pointer_y - mouse_y : 0;
+        mouse_x = now->pointer_x;
+        mouse_y = now->pointer_y;
+        mouseMotion(time, mouse_x, mouse_y, dx, dy);
+    }
+    static const int pointer_buttons[2] = {LINUX_SDL_BUTTON_LEFT, LINUX_SDL_BUTTON_RIGHT};
+    bool pointer_down_now[2] = {now->pointer && now->pointer_left, now->pointer && now->pointer_right};
+    bool pointer_down_before[2] = {before.pointer && before.pointer_left, before.pointer && before.pointer_right};
+    for (unsigned i = 0; i < 2; ++i)
+        if (pointer_down_now[i] != pointer_down_before[i]) {
+            if (pointer_down_now[i])
+                buttonDown(time, pointer_buttons[i]);
+            else
+                buttonUp(time, pointer_buttons[i]);
+        }
     bool touching_before = before.fingers > 0, touching_now = now->fingers > 0;
     if (touching_now) {
         if (!touching_before) {

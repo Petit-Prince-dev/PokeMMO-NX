@@ -4,7 +4,7 @@
 #include <stdint.h>
 
 // Input of the virtual SDL3: a queue of SDL_Event records (128 bytes, SDL 3 layout) fed by snapshots of the console's input.
-// The touch screen is a mouse (a tap is a left click, a long press a right click), the controller is an SDL gamepad.
+// The touch screen is a mouse (a tap is a left click, a long press a right click), the controller is an SDL gamepad, or a mouse while its cursor is on.
 // linux_sdl_input.c reads the console's input.
 #define LINUX_SDL_EVENT_BYTES 128u
 #define LINUX_SDL_GAMEPAD_ID 1u
@@ -32,6 +32,9 @@ typedef struct {
     bool gamepad;      // a controller is connected
     unsigned fingers;  // fingers on the screen
     float x, y;        // first finger, in window pixels
+    bool pointer;      // the controller's cursor is on (linux_sdl_cursor.c): a second mouse, which the game sees besides the touch screen
+    float pointer_x, pointer_y;
+    bool pointer_left, pointer_right;
     uint32_t buttons;  // bit i = SDL_GamepadButton i
     int16_t axes[LINUX_SDL_GAMEPAD_AXES];
     uint64_t timestamp_ns;

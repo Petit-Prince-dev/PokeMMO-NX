@@ -6,7 +6,7 @@ The official Linux ARM64 PokeMMO client runs as is, through a loader written in 
 
 Unofficial project, not affiliated with PokeMMO. The release zip contains the official unmodified PokeMMO client (Linux ARM64 part only), which belongs to the PokeMMO team. The ROMs are not included, you must use your own.
 
-Version 1.0.0 - author: Petit_Prince
+Version 1.1.0 - author: Petit_Prince
 
 ## Just want to play?
 
@@ -24,6 +24,7 @@ The first launch builds its caches from your ROMs: 3 to 5 minutes of black scree
 
 - **Dynamic Resolution:** 1280x720 in handheld mode, 1920x1080 when docked. It changes while you play when you dock or undock the console.
 - **Touch screen:** a tap is a left click, a long press (finger held in place) is a right click, moving the finger drags.
+- **Cursor with the controller:** click the left stick (L3) to turn a cursor on or off. While it is on, the left stick moves it, ZR is the left click, ZL the right click, and the game does not see the controller.
 - **Keyboard:** click the right stick (R3) to open or close the console's keyboard (login, chat).
 - **File chooser:** buttons such as "Select File" open a chooser drawn over the game. It shows the game's folders and the whole SD card (folder `sd`).
 

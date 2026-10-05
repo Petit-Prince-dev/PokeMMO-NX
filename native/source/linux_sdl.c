@@ -6,6 +6,7 @@
 #include "linux_file_picker.h"
 #include "linux_format.h"
 #include "linux_threads.h"
+#include "linux_sdl_cursor.h"
 #include "linux_sdl_events.h"
 #include "linux_sdl_io.h"
 #include "linux_sdl_keys.h"
@@ -511,7 +512,11 @@ static bool sdlGlSwapWindow(void *window) {
         unsigned w, h;
         screenSize(&w, &h);
         linuxFilePickerDraw(w, h);
-    }  // the file chooser, over the frame just drawn
+    } else {
+        unsigned w, h;
+        screenSize(&w, &h);
+        linuxSdlCursorDraw(w, h);
+    }  // the file chooser or the cursor, over the frame just drawn
     bool ok = eglSwapBuffers(egl_display, egl_surface);
     if (ok) applySizeRequest();
     unsigned frame = atomic_fetch_add(&frame_counter, 1) + 1;
@@ -558,6 +563,7 @@ static void pumpInput(void) {
         snapshot.buttons &= ~(1u << 8);  // the keyboard's button is not also a game button
         unsigned width, height;
         screenSize(&width, &height);
+        linuxSdlCursorUpdate(&snapshot, width, height);
         snapshot.x *= (float)width / 1280.0f;  // the touch screen reports positions of a 1280x720 screen, the mouse of the game lives in window pixels
         snapshot.y *= (float)height / 720.0f;
         linuxSdlEventsUpdate(&snapshot);
