@@ -1,0 +1,18 @@
+{
+  "libstdc++6_12.2.0-14+deb12u1_arm64.deb": {
+    "sha256": "26e138c677a985775331373828a6c286c551ff397cb735d00e2383cb273d1cb2",
+    "bytes": 556608,
+    "url": "https://deb.debian.org/debian/pool/main/g/gcc-12/libstdc++6_12.2.0-14+deb12u1_arm64.deb",
+    "extracted": "libstdc++.so.6",
+    "extracted_sha256": "532f3a12d7b8fef6cc7a064ea106b6c4ab2365674b73e743e4a385d4ffb6c8ab",
+    "extracted_bytes": 2174296
+  },
+  "libgcc-s1_12.2.0-14+deb12u1_arm64.deb": {
+    "sha256": "576926b283613db80168ddf76380a3bd877602778cf0d226caa7bfbfa71eacf3",
+    "bytes": 34816,
+    "url": "https://deb.debian.org/debian/pool/main/g/gcc-12/libgcc-s1_12.2.0-14+deb12u1_arm64.deb",
+    "extracted": "libgcc_s.so.1",
+    "extracted_sha256": "046856f95f4636f1fc7c3a12bf4f3cd5634c2fc5145c3fdf7395d4f349fa69c7",
+    "extracted_bytes": 133448
+  }
+}

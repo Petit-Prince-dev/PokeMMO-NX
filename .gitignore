@@ -1,0 +1,7 @@
+private/
+artifacts/
+native/build/
+native/*.elf
+native/*.nro
+native/*.nacp
+__pycache__/
