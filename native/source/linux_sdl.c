@@ -538,6 +538,15 @@ static bool padAtRest(const LinuxInputSnapshot *snapshot) {  // no button held, 
         if (snapshot->axes[i] > 9000 || snapshot->axes[i] < -9000) return false;
     return snapshot->buttons == 0;
 }
+// The directional pad does what the left stick does (its buttons are the game's hotkeys): the stick follows it and its buttons are not passed on.
+static void padMirrorsStick(LinuxInputSnapshot *snapshot) {
+    int right = (int)((snapshot->buttons >> 14) & 1u) - (int)((snapshot->buttons >> 13) & 1u);
+    int down = (int)((snapshot->buttons >> 12) & 1u) - (int)((snapshot->buttons >> 11) & 1u);
+    int strength = right && down ? 23170 : 32767;  // a diagonal keeps the strength of a full stick
+    if (right) snapshot->axes[0] = (int16_t)(right * strength);
+    if (down) snapshot->axes[1] = (int16_t)(down * strength);
+    snapshot->buttons &= ~(0xFu << 11);
+}
 static void pumpInput(void) {
     linuxSdlInputKeyboardPump();
     uint64_t now = armTicksToNs(armGetSystemTick());
@@ -566,6 +575,7 @@ static void pumpInput(void) {
         }
         keyboard_button_before = keyboard_button;
         snapshot.buttons &= ~(1u << 8);  // the keyboard's button is not also a game button
+        padMirrorsStick(&snapshot);
         unsigned width, height;
         screenSize(&width, &height);
         // The console's keyboard uses the controller while it is up: the game sees it at rest until the keyboard is gone and everything is released.

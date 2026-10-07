@@ -25,6 +25,7 @@ The first launch builds its caches from your ROMs: 3 to 5 minutes of black scree
 - **Dynamic Resolution:** 1280x720 in handheld mode, 1920x1080 when docked. It changes while you play when you dock or undock the console.
 - **Touch screen:** a tap is a left click, a long press (finger held in place) is a right click, moving the finger drags.
 - **Cursor with the controller:** click the left stick (L3) to turn a cursor on or off. While it is on, the left stick moves it, ZR is the left click, ZL the right click, and the game does not see the controller.
+- **D-pad:** it is now mirrored on the left stick, so it moves your character and selects in menus like the stick does. Because of this, you lose the 4 D-pad hotkeys (1 to 4), but you can rebind 2 hotkeys to L and R, which the game doesn't use!
 - **Keyboard:** click the right stick (R3) to open or close the console's keyboard (login, chat).
 - **File chooser:** buttons such as "Select File" open a chooser drawn over the game. It shows the game's folders and the whole SD card (folder `sd`).
 
