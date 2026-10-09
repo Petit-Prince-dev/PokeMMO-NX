@@ -6,7 +6,7 @@ The official Linux ARM64 PokeMMO client runs as is, through a loader written in 
 
 Unofficial project, not affiliated with PokeMMO. The release zip contains the official unmodified PokeMMO client (Linux ARM64 part only), which belongs to the PokeMMO team. The ROMs are not included, you must use your own.
 
-Version 1.1.3 - author: Petit_Prince
+Version 1.1.4 - author: Petit_Prince
 
 ## Just want to play?
 
