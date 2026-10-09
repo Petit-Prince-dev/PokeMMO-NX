@@ -402,6 +402,15 @@ static void virtualStat(int kind, LinuxFileStat *output) {
                    : (kind == VIRTUAL_PIPE ? 010600u : (IN_MEMORY_KIND(kind) ? 0600u : 020666u)));  // S_IFDIR / S_IFSOCK / S_IFIFO / anonymous / S_IFCHR
     if (kind != VIRTUAL_DIR && kind != VIRTUAL_SOCKET && !IN_MEMORY_KIND(kind)) output->rdevice = kind == VIRTUAL_NULL ? 0x103 : 0x109;
 }
+// The file system of the console gives every file the same device and inode (0). A program that tells files apart by them (Java's ZipFile hands
+// out the archive it already has open for another file with the same device, inode and modification time, and the game's archives all carry the
+// same time) would take different files for one. The inode is made from the path.
+static void identify(const char *path, LinuxFileStat *output) {
+    uint64_t hash = 0xcbf29ce484222325ull;
+    for (const unsigned char *p = (const unsigned char *)path; *p; ++p) hash = (hash ^ *p) * 0x100000001b3ull;
+    output->device = 1;
+    output->inode = hash ? hash : 1;
+}
 static int statNative(const char *name, bool follow, LinuxFileStat *output) {
     int kind = nativeVirtual(name);
     if (kind) {
@@ -410,7 +419,10 @@ static int statNative(const char *name, bool follow, LinuxFileStat *output) {
     }
     Descriptor *d = byPath(name);
     int error = d ? nativeFstat(d->native, output) : nativeStat(name, follow, output);
-    if (!error) observePath(name);
+    if (!error) {
+        identify(name, output);
+        observePath(name);
+    }
     return error;
 }
 static int pending_socket_close = -1;  // a socket is closed after the descriptor lock is released: closing may wait for the network
@@ -774,8 +786,10 @@ int linuxAbiFxstat(int version, int fd, LinuxFileStat *output) {
     int error = 0;
     if (d->virtual_kind)
         virtualStat(d->virtual_kind, &value);
-    else
+    else {
         error = nativeFstat(d->native, &value);
+        if (!error) identify(d->path, &value);
+    }
     if (!error) *output = value;
     return finish(error);
 }
