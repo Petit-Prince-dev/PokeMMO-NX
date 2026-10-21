@@ -37,6 +37,8 @@ Even at default clocks the game can run at 120 fps. However, it suffers from loa
 
 Nothing is written by default. To get a log, create an empty file named `debug.enabled` in `switch/PokeMMO` on the SD card, restart, reproduce the problem, leave the game, then read `switch/PokeMMO/diagnostics.log`.
 
+IMPORTANT: Once you have reproduced the issue and collected your log file, make sure to delete the debug.enabled file. Debug logging generates a large amount of data and could potentially reduce the lifespan of your MicroSD card if left enabled during long hours of play time.
+
 ## Build (Windows, devkitPro)
 
 Requirements: devkitPro with devkitA64, libnx and the Switch portlibs (Mesa/EGL, zlib); Python 3.
