@@ -14,4 +14,4 @@ The MIT license of this project (`LICENSE`) covers the code in this repository o
 
 The release zip also contains `PokeMMO-forwarder.nsp`, a home menu launcher made with an online NSP forwarder generator. It only starts `switch/PokeMMO/PokeMMO.nro` and holds no game data; it is not covered by the MIT license of this project.
 
-The release zip also contains the PokeMMO client, unmodified (revision 32920, Linux ARM64 part). It is proprietary software of the PokeMMO team and is not covered by the MIT license.
+The release zip also contains the PokeMMO client, unmodified (revision 34702, Linux ARM64 part). It is proprietary software of the PokeMMO team and is not covered by the MIT license.
