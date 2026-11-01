@@ -41,3 +41,5 @@ typedef struct {
 int linuxNetNativeResolve(const char *node, const char *service, int flags, int socktype, int protocol, LinuxNetResolved *result);
 // The console's own IPv4 address and netmask, in network order; false while it has no network.
 bool linuxNetNativeLocalNetwork(uint32_t *address, uint32_t *netmask);
+// The console's own Wi-Fi MAC address; returns -1 with a Linux errno when it cannot be read.
+int linuxNetNativeMacAddress(uint8_t address[6], int *error);

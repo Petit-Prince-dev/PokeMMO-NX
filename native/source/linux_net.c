@@ -302,7 +302,14 @@ static int interfaceRequest(unsigned long request, void *argument) {
             return 0;
         case SIOCGIFMTU: item->u.value = found->mtu; return 0;
         case SIOCGIFINDEX: item->u.value = found->index; return 0;
-        case SIOCGIFHWADDR: item->u.hardware.family = found->hardware_family; return 0;  // no hardware address is told: all zeros
+        case SIOCGIFHWADDR: {
+            item->u.hardware.family = found->hardware_family;
+            if (found->hardware_family == 1) {
+                int error = 0;
+                if (linuxNetNativeMacAddress(item->u.hardware.data, &error) < 0) return fail(error);
+            }
+            return 0;
+        }
         default: return fail(25);
     }
 }
