@@ -11,7 +11,7 @@ include $(DEVKITPRO)/libnx/switch_rules
 TARGET      := PokeMMO
 APP_TITLE   := PokeMMO
 APP_AUTHOR  := Petit_Prince
-APP_VERSION := 1.1.5
+APP_VERSION := 1.1.6
 ICON        := icon.jpg
 
 BUILD    := build
