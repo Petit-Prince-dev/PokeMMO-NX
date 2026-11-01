@@ -22,6 +22,7 @@ The first launch builds its caches from your ROMs: 3 to 5 minutes of black scree
 
 ## What is adapted to the Switch
 
+- **Client updates:** before the game starts, the port quietly checks for client updates. If one is available, it installs it automatically while keeping your settings, ROMs and mods. Simply wait for the update to finish, and the game will launch automatically.
 - **Dynamic Resolution:** 1280x720 in handheld mode, 1920x1080 when docked. It changes while you play when you dock or undock the console.
 - **Touch screen:** a tap is a left click, a long press (finger held in place) is a right click, moving the finger drags.
 - **Cursor with the controller:** click the left stick (L3) to turn a cursor on or off. While it is on, the left stick moves it, ZR is the left click, ZL the right click, and the game does not see the controller.
@@ -41,7 +42,7 @@ IMPORTANT: Once you have reproduced the issue and collected your log file, make 
 
 ## Build (Windows, devkitPro)
 
-Requirements: devkitPro with devkitA64, libnx and the Switch portlibs (Mesa/EGL, zlib); Python 3.
+Requirements: devkitPro with devkitA64, libnx and the Switch portlibs (Mesa/EGL, zlib/minizip); Python 3.
 
 ```powershell
 python tools/fetch_client.py            # the official client into private/ (once)
@@ -60,6 +61,7 @@ MIT, see `LICENSE`. The libraries linked into the application have their own lic
 
 ## How it works
 
+- `client_update*.c`: checks the official client revision before launch, downloads and verifies a newer client, and restores interrupted installations.
 - `main.c`, `game.c`: start the client's `main` on its own thread, wait for it, and leave the way a regular game does.
 - `elf_*.c`, `linux_dl.c`: ELF loader for the client and its libraries.
 - `linux_*.c`: the Linux libc the client expects (files, memory, threads, sockets...), adapted to Horizon. An unsupported call is refused cleanly.

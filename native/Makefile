@@ -27,7 +27,7 @@ LDFLAGS  = -specs=$(DEVKITPRO)/libnx/switch.specs -g $(ARCH) -Wl,-Map,$(notdir $
 LDFLAGS += -Wl,--wrap=framebufferCreate,--wrap=nwindowDequeueBuffer
 
 # Mesa's EGL is C++, hence libstdc++
-LIBS    := -lglad -lEGL -lglapi -ldrm_nouveau -lz -lstdc++ -lm -lnx -lm
+LIBS    := -lglad -lEGL -lglapi -ldrm_nouveau -lminizip -lz -lstdc++ -lm -lnx -lm
 LIBDIRS := $(PORTLIBS) $(LIBNX)
 
 ifneq ($(BUILD),$(notdir $(CURDIR)))

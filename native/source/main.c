@@ -3,6 +3,7 @@
 #include <sys/stat.h>
 #include <switch.h>
 #include "diagnostics.h"
+#include "client_update.h"
 #include "display.h"
 #include "game.h"
 #include "linux_sdl.h"
@@ -60,7 +61,9 @@ int main(int argc, char **argv) {
 
     if (appletGetAppletType() != AppletType_Application)
         showMessage("Applet mode: not enough memory. Restart hbmenu while holding R when launching a game (application mode).");
-    else if (stat(CLIENT_PATH, &info) != 0)
+    else if (!clientUpdateBeforeLaunch(sockets_ready && nifm_ready)) {
+        if (*clientUpdateFailure()) showMessage(clientUpdateFailure());
+    } else if (stat(CLIENT_PATH, &info) != 0)
         showMessage("The PokeMMO client was not found in switch/PokeMMO/isolate-root/game.");
     else {
         // The game draws through EGL on the console's window. The text console is created and released once before it takes over: that is
