@@ -15,7 +15,7 @@
 #define UPDATE_MAX_ARCHIVE (1024ull * 1024ull * 1024ull)
 #define UPDATE_MAX_EXPANDED (2ull * 1024ull * 1024ull * 1024ull)
 
-typedef enum { UPDATE_CHECK, UPDATE_DOWNLOAD, UPDATE_EXTRACT, UPDATE_INSTALL, UPDATE_DONE, UPDATE_FAILED, UPDATE_BROKEN } UpdatePhase;
+typedef enum { UPDATE_CHECK, UPDATE_DOWNLOAD, UPDATE_EXTRACT, UPDATE_INSTALL, UPDATE_DONE, UPDATE_FAILED, UPDATE_BROKEN, UPDATE_CHECK_FAILED } UpdatePhase;
 typedef struct {
     atomic_bool cancel, finished;
     atomic_uint phase, progress, resolver;

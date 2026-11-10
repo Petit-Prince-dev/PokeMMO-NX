@@ -28,7 +28,10 @@ static void worker(void *argument) {
     uint32_t installed = updateInstalledRevision(UPDATE_GAME "/revision.txt");
     UpdateHttp *http = state->network_ready && installed && !updateCancelled(state) ? updateHttpOpen(state) : NULL;
     UpdateRemote remote = {0};
-    if (http && updateRemoteRevision(http, &remote) && remote.revision > installed && !updateCancelled(state)) {
+    bool checked = http && updateRemoteRevision(http, &remote) && !updateCancelled(state);
+    if (!checked) {
+        updateProgress(state, UPDATE_CHECK_FAILED, 0);
+    } else if (remote.revision > installed) {
         diagnosticsTrace("update.detected installed=%u remote=%u", installed, remote.revision);
         updateProgress(state, UPDATE_DOWNLOAD, 0);
         UpdateEntry *entries = NULL;
@@ -52,6 +55,20 @@ static void worker(void *argument) {
     updateHttpClose(http);
     atomic_store(&state->finished, true);
 }
+static bool showCheckFailure(void) {
+    diagnosticsTrace("update.check=FAILED");
+    bool running = appletMainLoop();
+    if (running && updateScreenOpen()) {
+        updateScreenDraw(0, "Couldn't check for game updates.", "Starting the game. Check your internet connection.");
+        uint64_t deadline = updateNow() + 3000;
+        while (running && updateNow() < deadline) {
+            svcSleepThread(16000000);
+            running = appletMainLoop();
+        }
+    }
+    updateScreenClose();
+    return running;
+}
 const char *clientUpdateFailure(void) { return failure ? failure : ""; }
 bool clientUpdateBeforeLaunch(bool network_ready) {
     failure = NULL;
@@ -64,11 +81,11 @@ bool clientUpdateBeforeLaunch(bool network_ready) {
     atomic_store(&job.check_deadline, updateNow() + 4000);
     Thread thread;
     Result rc = threadCreate(&thread, worker, &job, NULL, 256 * 1024, 0x3b, -2);
-    if (R_FAILED(rc)) return true;
+    if (R_FAILED(rc)) return showCheckFailure();
     rc = threadStart(&thread);
     if (R_FAILED(rc)) {
         threadClose(&thread);
-        return true;
+        return showCheckFailure();
     }
     bool quit = false, screen_ready = false;
     uint64_t drawn_at = 0;
@@ -80,7 +97,8 @@ bool clientUpdateBeforeLaunch(bool network_ready) {
             if (handle) resolverCancel(handle);
         }
         unsigned phase = atomic_load(&job.phase);
-        if (!quit && phase != UPDATE_CHECK && phase != UPDATE_DONE && updateNow() - drawn_at >= 100) {
+        bool updating = phase == UPDATE_DOWNLOAD || phase == UPDATE_EXTRACT || phase == UPDATE_INSTALL;
+        if (!quit && updating && updateNow() - drawn_at >= 100) {
             if (!screen_ready) screen_ready = updateScreenOpen();
             updateScreenDraw(atomic_load(&job.progress), "PokeMMO client update detected, updating...", NULL);
             drawn_at = updateNow();
@@ -90,6 +108,7 @@ bool clientUpdateBeforeLaunch(bool network_ready) {
     threadWaitForExit(&thread);
     threadClose(&thread);
     unsigned phase = atomic_load(&job.phase);
+    if (!quit && phase == UPDATE_CHECK_FAILED) return showCheckFailure();
     if (!quit && (phase == UPDATE_FAILED || phase == UPDATE_BROKEN)) {
         if (!screen_ready) screen_ready = updateScreenOpen();
         if (screen_ready) {

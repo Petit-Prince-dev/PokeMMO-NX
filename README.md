@@ -22,7 +22,7 @@ The first launch builds its caches from your ROMs: 3 to 5 minutes of black scree
 
 ## What is adapted to the Switch
 
-- **Client updates:** before the game starts, the port quietly checks for client updates. If one is available, it installs it automatically while keeping your settings, ROMs and mods. Simply wait for the update to finish, and the game will launch automatically.
+- **Client updates:** before the game starts, the port quietly checks for client updates. If one is available, it installs it automatically while keeping your settings, ROMs and mods. Simply wait for the update to finish, and the game will launch automatically. If the check fails, a brief message appears and the game starts as usual.
 - **Dynamic Resolution:** 1280x720 in handheld mode, 1920x1080 when docked. It changes while you play when you dock or undock the console.
 - **Touch screen:** a tap is a left click, a long press (finger held in place) is a right click, moving the finger drags.
 - **Cursor with the controller:** click the left stick (L3) to turn a cursor on or off. While it is on, the left stick moves it, ZR is the left click, ZL the right click, and the game does not see the controller.
